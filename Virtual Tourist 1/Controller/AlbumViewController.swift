@@ -15,7 +15,7 @@ class AlbumViewController: UIViewController,UICollectionViewDelegate,MKMapViewDe
     
     // MARK: Properties
     var currentPin: Pin!
-    var newPin = true
+    //var newPin = true
     var dataController:DataController!
     var fetchedResultsController:NSFetchedResultsController<Photo>!
     let flickr = Flickrclient.shared()
@@ -24,6 +24,9 @@ class AlbumViewController: UIViewController,UICollectionViewDelegate,MKMapViewDe
     var selectingState = false
     var StopDownloading = false
     
+    var insertedIndexPaths: [IndexPath]!
+    var deletedIndexPaths: [IndexPath]!
+    var updatedIndexPaths: [IndexPath]!
     
     
     @IBOutlet weak var NewCollectionBtn: UIButton!
@@ -36,6 +39,8 @@ class AlbumViewController: UIViewController,UICollectionViewDelegate,MKMapViewDe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        mapView.delegate = self
+        mapView.isUserInteractionEnabled = true
         setupFetchedResultsController()
         setTheMap()
         setCollectionView()
@@ -138,17 +143,22 @@ class AlbumViewController: UIViewController,UICollectionViewDelegate,MKMapViewDe
                             self.setUIForState(.Normal)
                             self.showAlert(withTitle: "Error", withMessage: "No photo returned. Try again.") }
                     }else{
-                        for index in 0...imageUrlString.count-1 {
-                            if !(self.StopDownloading){
-                                // if an image exists at the url, set the image and title
-                                let imageURL = URL(string: imageUrlString[index])
-                                if let imageData = try? Data(contentsOf: imageURL!) {
-                                    DispatchQueue.main.async {
-                                        let photo = Photo(context: self.dataController.viewContext)
-                                        photo.image = imageData
-                                        photo.location = self.currentPin
-                                        try? self.dataController.viewContext.save()
-                                    }} }}
+                        if !imageUrlString.isEmpty
+                        {
+                            for index in 0...imageUrlString.count-1 {
+                                if !(self.StopDownloading){
+                                    // if an image exists at the url, set the image and title
+                                    let imageURL = URL(string: imageUrlString[index])
+                                    if let imageData = try? Data(contentsOf: imageURL!) {
+                                        DispatchQueue.main.async {
+                                            let photo = Photo(context: self.dataController.viewContext)
+                                            photo.image = imageData
+                                            photo.location = self.currentPin
+                                            try? self.dataController.viewContext.save()
+                                        }} }}
+                            
+                        }
+                      
                         // Dawnload Completed
                         DispatchQueue.main.async {
                             self.setUIForState(.Normal)
@@ -281,3 +291,57 @@ class AlbumViewController: UIViewController,UICollectionViewDelegate,MKMapViewDe
 
    
 }
+extension AlbumViewController {
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        insertedIndexPaths = [IndexPath]()
+        deletedIndexPaths = [IndexPath]()
+        updatedIndexPaths = [IndexPath]()
+    }
+    
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?) {
+        
+        switch (type) {
+        case .insert:
+            insertedIndexPaths.append(newIndexPath!)
+            break
+        case .delete:
+            deletedIndexPaths.append(indexPath!)
+            break
+        case .update:
+            updatedIndexPaths.append(indexPath!)
+            break
+        case .move:
+            print("Move an item. We don't expect to see this in this app.")
+            break
+        }
+        
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
+        collectionView.performBatchUpdates({() -> Void in
+            
+            for indexPath in self.insertedIndexPaths {
+                self.collectionView.insertItems(at: [indexPath])
+            }
+            
+            for indexPath in self.deletedIndexPaths {
+                self.collectionView.deleteItems(at: [indexPath])
+            }
+            
+            for indexPath in self.updatedIndexPaths {
+                self.collectionView.reloadItems(at: [indexPath])
+            }
+            
+        }, completion: nil)
+    }
+    
+}
+
+

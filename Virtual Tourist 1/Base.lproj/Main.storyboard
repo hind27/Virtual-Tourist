@@ -21,24 +21,18 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="7ae-6t-cxS">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </mapView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="LdQ-kQ-KKh">
-                                <rect key="frame" x="177" y="323" width="20" height="20"/>
-                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="7ae-6t-cxS" secondAttribute="bottom" id="3Ss-fR-QRy"/>
-                            <constraint firstItem="LdQ-kQ-KKh" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="5v3-j5-MvK"/>
                             <constraint firstItem="7ae-6t-cxS" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Gm2-kq-B8Z"/>
                             <constraint firstItem="7ae-6t-cxS" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="hW1-qd-RnK"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="7ae-6t-cxS" secondAttribute="trailing" id="o9e-HL-DWO"/>
-                            <constraint firstItem="LdQ-kQ-KKh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yq2-uQ-wzg"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="NBy-Sz-hmI"/>
                     <connections>
-                        <outlet property="activityIndicatorMap" destination="LdQ-kQ-KKh" id="KVU-TP-SO7"/>
                         <outlet property="mapView" destination="7ae-6t-cxS" id="cBn-m1-zBC"/>
                     </connections>
                 </viewController>

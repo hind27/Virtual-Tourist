@@ -42,7 +42,7 @@ struct Constants {
     // MARK: - Flickr Parameter Values
     
     struct FlickrParameterValues {
-        static let SearchMethod = "flickr.photos.getRecent"
+        static let SearchMethod = "flickr.photos.search"
         static let APIKey = "647720db0fac5dd7f02dfc9ddefa4084"
         static let ResponseFormat = "json"
         static let DisableJSONCallback = "1" /* 1 means "yes" */

@@ -163,6 +163,7 @@ class Flickrclient {
         
         // create session and request
         let request = URLRequest(url: flickrURLFromParameters(methodParameters))
+        print (flickrURLFromParameters(methodParameters))
         
         // create network request
         ImageTask = session.dataTask(with: request) { (data, response, error) in
@@ -176,8 +177,8 @@ class Flickrclient {
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                responseClosure([""], error as? String)
                 displayError("There was an error with your request")
+              responseClosure([""], error as? String)
                 return
             }
             
@@ -200,8 +201,8 @@ class Flickrclient {
             do {
                 parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
             } catch {
+                 displayError("Could not parse the data as JSON: '\(data)'")
                 responseClosure([""], error as? String)
-                displayError("Could not parse the data as JSON: '\(data)'")
                 return
             }
             
@@ -227,20 +228,23 @@ class Flickrclient {
             }
             
             if photosArray.count == 0 {
-                responseClosure([""], error as? String)
                 displayError("No Photos Found. Search Again.")
+                responseClosure([""], error as? String)
                 return
             } else {
                 for index in 0...photosArray.count-1 {
                     let photoDictionary = photosArray[index] as [String: AnyObject]
-                    //url_m
-                    /* GUARD: Does our photo have a key for 'url_m'? */
-                    guard let imageUrlString = photoDictionary[Constants.FlickrResponseKeys.MediumURL] as? String else {
-                        responseClosure([""], error as? String)
-                        displayError("Cannot find key '\(Constants.FlickrResponseKeys.MediumURL)' in \(photoDictionary)")
-                        return
+                    //url_n
+                    /* GUARD: Does our photo have a key for 'url_n'? */
+                    if let imageUrlString = photoDictionary[Constants.FlickrResponseKeys.MediumURL]
+                        as? String   {
+                        
+                        self.imgUrl.append(imageUrlString)
+                    // displayError("Cannot find key '\(Constants.FlickrResponseKeys.MediumURL)' in \(photoDictionary)")
+                      //  responseClosure([""], error as? String)
+                       // return
                     }
-                    self.imgUrl.append(imageUrlString)
+                   // self.imgUrl.append(imageUrlString)
                 }
                 
                 responseClosure(self.imgUrl, nil)

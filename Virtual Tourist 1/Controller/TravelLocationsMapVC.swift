@@ -39,8 +39,8 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
     // MARK: Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        activityIndicatorMap.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
-        activityIndicatorMap.startAnimating()
+        //a
+       
         setupLongPressGestureRecognizer()
         //setUI
         EditBtn = UIBarButtonItem(title: "Edit", style: .done, target: self, action: #selector(deletePin))
@@ -59,7 +59,7 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
         super.viewWillAppear(animated)
         // Display the pin locations on the map
         displayPinLocations()
-        self.activityIndicatorMap.stopAnimating()
+        
     }
    
     //------------------------------------------------------------------------------
@@ -76,6 +76,7 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
             setUIForState(.delete)
             deleteMode = true
         }
+        EditBtn.isEnabled = true
     }
     
     
@@ -128,6 +129,7 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
     
     // MARK:  - MKMapView
     fileprivate func displayPinLocations() {
+        EditBtn.isEnabled = true
         setupFetchedResultsController()
         var annotations = [MKPointAnnotation]()
         for pin in (fetchedResultsController.fetchedObjects)! {
@@ -170,10 +172,6 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
     // -------------------------------------------------------------------------
     // MARK: - MKMapViewDelegate
     
-    func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
-        self.activityIndicatorMap.stopAnimating()
-    }
-    
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         
         let reuseId = "pin"
@@ -193,7 +191,7 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
     
         // Get coordinates for selected pin
-       // let annotation = view.annotation as! MKPointAnnotation
+     
         let selectedAnnotation = view.annotation
         let selectedAnnotationLat = selectedAnnotation?.coordinate.latitude
         let selectedAnnotationLong = selectedAnnotation?.coordinate.longitude
@@ -203,13 +201,10 @@ class TravelLocationsMapVC: UIViewController, MKMapViewDelegate, CLLocationManag
                 if pin.latitude == selectedAnnotationLat && pin.longitude == selectedAnnotationLong {
                               selectedPin = pin
                             if  deleteMode == false {
-                        
                                  let vc = self.storyboard?.instantiateViewController(withIdentifier:"ToPhotoAlbum") as! AlbumViewController
                                     vc.dataController = dataController
                                     vc.currentPin = selectedPin
-                                    vc.newPin = false
                                     self.navigationController?.pushViewController(vc, animated: true)
-                               // }
                                } else {
                                     // Delete pin from map and database
                                    DispatchQueue.main.async {
